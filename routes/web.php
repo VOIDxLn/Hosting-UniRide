@@ -109,3 +109,7 @@ Route::middleware('auth')->group(function () {
     // ✅ Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+Route::get('/admin', function(){
+    return view('layouts.admin');
+});
