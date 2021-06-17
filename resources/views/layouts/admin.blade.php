@@ -166,5 +166,8 @@
 @stack('scripts')
 @include('sweetalert::alert')
 
+    @stack('scripts')
+
+    <script src="{{asset('js/main.js')}}"></script>
 </body>
 </html>
