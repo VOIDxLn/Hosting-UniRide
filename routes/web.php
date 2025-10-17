@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use App\Http\Controllers\HomeController; 
 use App\Http\Controllers\ProductController; 
@@ -110,5 +110,36 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::get('/dashboard', [HomeController::class,'index'])->name('home');
-Route::resource('/products', ProductController::class);
+// Rutas protegidas (solo usuarios autenticados)
+Route::middleware('auth')->group(function () {
+
+    // Dashboard según rol
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+
+        // Tomamos el primer rol asignado
+        $role = $user->roles->first()->name ?? null;
+
+        switch ($role) {
+            case 'Admin':
+                return view('layouts.admin', compact('user'));
+            case 'Conductor':
+                return view('layouts.conductor', compact('user'));
+            case 'Pasajero':
+                return view('layouts.pasajero', compact('user'));
+            default:
+                auth()->logout();
+                return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol válido.');
+        }
+    })->name('dashboard');
+
+    // Recursos protegidos
+    Route::resource('/products', ProductController::class);
+    Route::resource('/users', UserController::class);
+    
+    // CRUD de viajes (solo Admin por ahora)
+    Route::resource('/trips', TripController::class);
+
+    // Logout
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});

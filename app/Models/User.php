@@ -68,3 +68,5 @@ class User extends Authenticatable
         return $this->hasMany(Trip::class, 'user_id');
     }
 }
+
+
