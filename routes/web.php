@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use App\Http\Controllers\HomeController; 
 use App\Http\Controllers\ProductController; 
@@ -114,31 +114,70 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
 
     // Dashboard según rol
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
+   Route::get('/dashboard', function () {
+    $user = auth()->user();
+    $role = $user->roles->first()->name ?? null;
 
-        // Tomamos el primer rol asignado
-        $role = $user->roles->first()->name ?? null;
+    switch ($role) {
+        case 'Admin':
+            return view('layouts.admin', compact('user'));
+        case 'Conductor':
+            return view('layouts.conductor', compact('user'));
+        case 'Pasajero':
+    $trips = \App\Models\Trip::where('available_seats', '>', 0)
+                ->orderBy('departure_time')
+                ->get();
+    return view('pasajero.trips.dashboard', compact('user', 'trips'));
 
-        switch ($role) {
-            case 'Admin':
-                return view('layouts.admin', compact('user'));
-            case 'Conductor':
-                return view('layouts.conductor', compact('user'));
-            case 'Pasajero':
-                return view('layouts.pasajero', compact('user'));
-            default:
-                auth()->logout();
-                return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol válido.');
-        }
-    })->name('dashboard');
+        default:
+            auth()->logout();
+            return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol válido.');
+    }
+})->name('dashboard');
+
 
     // Recursos protegidos
     Route::resource('/products', ProductController::class);
     Route::resource('/users', UserController::class);
     
-    // CRUD de viajes (solo Admin por ahora)
+    // CRUD de viajes (solo Admin)
     Route::resource('/trips', TripController::class);
+
+    // CRUD de vehículos y viajes (solo Conductor)
+    Route::prefix('conductor')->middleware(['auth'])->group(function () {
+        // Vehículos
+        Route::get('/vehicles', [VehicleController::class, 'index'])->name('conductor.vehicles.index');
+        Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('conductor.vehicles.create');
+        Route::post('/vehicles', [VehicleController::class, 'store'])->name('conductor.vehicles.store');
+        Route::get('/vehicles/{vehicle}/edit', [VehicleController::class, 'edit'])->name('conductor.vehicles.edit');
+        Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('conductor.vehicles.update');
+        Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('conductor.vehicles.destroy');
+
+        // Viajes
+        Route::get('/trips', [ConductorTripController::class, 'index'])->name('conductor.trips.index');
+        Route::get('/trips/create', [ConductorTripController::class, 'create'])->name('conductor.trips.create');
+        Route::post('/trips', [ConductorTripController::class, 'store'])->name('conductor.trips.store');
+        Route::get('/trips/{trip}/edit', [ConductorTripController::class, 'edit'])->name('conductor.trips.edit');
+        Route::put('/trips/{trip}', [ConductorTripController::class, 'update'])->name('conductor.trips.update');
+        Route::delete('/trips/{trip}', [ConductorTripController::class, 'destroy'])->name('conductor.trips.destroy');
+    });
+
+    // CRUD de viajes para pasajero
+Route::prefix('pasajero')->middleware(['auth'])->group(function () {
+    // Ver todos los viajes disponibles con filtros
+    Route::get('/trips', [PassengerTripController::class, 'index'])->name('pasajero.trips.index');
+
+    // Reservar un viaje
+    Route::post('/trips/{trip}/reserve', [PassengerTripController::class, 'reserve'])->name('pasajero.trips.reserve');
+
+    // Cancelar un viaje reservado
+    Route::delete('/trips/{trip}/cancel', [PassengerTripController::class, 'cancel'])->name('pasajero.trips.cancel');
+
+    // Mis viajes
+    Route::get('/my-trips', [PassengerTripController::class, 'myTrips'])->name('pasajero.trips.my_trips');
+
+});
+
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
