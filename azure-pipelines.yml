@@ -7,17 +7,12 @@ pool:
   vmImage: 'ubuntu-latest'  # Entorno Linux
 
 steps:
-# 1. Instalar PHP y extensiones necesarias
-- task: UsePHP@0
-  inputs:
-    version: '8.1'   # Ajusta según la versión de PHP de tu proyecto
-    extensions: 'pdo_mysql, mbstring, bcmath, tokenizer, xml, curl, json'
+# 1.2 Seleccionar PHP y ejecutar Composer desde script
+- script: |
+    php -v
+    composer install
+  displayName: 'Instalar dependencias de PHP'
 
-# 2. Instalar Composer
-- task: Composer@1
-  inputs:
-    command: 'install'
-    workingDirectory: '.'
 
 # 3. Copiar archivo .env (opcional para pruebas)
 - script: cp .env.example .env
