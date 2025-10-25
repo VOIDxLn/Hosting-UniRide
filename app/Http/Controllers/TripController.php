@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Trip;
 use Illuminate\Support\Facades\Auth;
 
-
 class TripController extends Controller
 {
     public function __construct()
@@ -14,12 +13,14 @@ class TripController extends Controller
         $this->middleware('auth');
     }
 
+    // 📋 Mostrar todos los viajes disponibles
     public function index()
     {
         $trips = Trip::orderBy('departure_time')->get();
         return view('trips.index', compact('trips'));
     }
 
+    // ➕ Crear un nuevo viaje
     public function store(Request $request)
     {
         $request->validate([
@@ -35,6 +36,7 @@ class TripController extends Controller
         return redirect()->route('trips.index')->with('success', 'Viaje creado correctamente.');
     }
 
+    // ✏️ Actualizar viaje existente
     public function update(Request $request, Trip $trip)
     {
         $request->validate([
@@ -50,26 +52,39 @@ class TripController extends Controller
         return redirect()->route('trips.index')->with('success', 'Viaje actualizado correctamente.');
     }
 
+    // 🗑️ Eliminar viaje
     public function destroy(Trip $trip)
     {
         $trip->delete();
         return redirect()->route('trips.index')->with('success', 'Viaje eliminado correctamente.');
     }
 
+    // ✅ Finalizar viaje (solo conductor)
     public function finalizar($id)
-{
-    $trip = Trip::findOrFail($id);
+    {
+        $trip = Trip::findOrFail($id);
 
-    // Verificar que el usuario logueado es el conductor
-    if ($trip->user_id !== Auth::id()) {
-        return back()->with('error', 'No tienes permiso para finalizar este viaje.');
+        if ($trip->user_id !== Auth::id()) {
+            return back()->with('error', 'No tienes permiso para finalizar este viaje.');
+        }
+
+        $trip->status = 'Finalizado';
+        $trip->save();
+
+        return back()->with('success', '✅ El viaje ha sido marcado como finalizado.');
     }
 
-    // Actualizar estado a Finalizado
-    $trip->status = 'Finalizado';
-    $trip->save();
+    // 🚗 Mostrar los viajes que el usuario ha pagado
+    public function myTrips()
+    {
+        $user = auth()->user();
 
-    return back()->with('success', '✅ El viaje ha sido marcado como finalizado.');
-}
+        // Obtener los viajes pagados por el usuario
+        $trips = $user->trips()
+            ->wherePivot('status', 'pagado')
+            ->with('vehicle')
+            ->get();
 
+        return view('trips.my_trips', compact('trips'));
+    }
 }

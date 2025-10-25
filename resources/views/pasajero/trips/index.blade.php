@@ -22,7 +22,6 @@
         </div>
     </form>
 
-    <!-- Tabla de viajes -->
     <div class="card shadow mb-4">
         <div class="card-body">
             @if($trips->isEmpty())
@@ -37,7 +36,7 @@
                                 <th>Destino</th>
                                 <th>Costo</th>
                                 <th>Cupos disponibles</th>
-                                <th>Acciones</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,15 +45,23 @@
                                 <td>{{ $trip->departure_time }}</td>
                                 <td>{{ $trip->origin }}</td>
                                 <td>{{ $trip->destination }}</td>
-                                <td>${{ $trip->price }}</td>
+                                <td>${{ number_format($trip->price, 0, ',', '.') }}</td>
                                 <td>{{ $trip->available_seats }}</td>
                                 <td>
-                                    <form action="{{ route('pasajero.trips.reserve', $trip) }}" method="POST">
-                                        @csrf
-                                        <button class="btn btn-sm btn-success" {{ $trip->available_seats == 0 ? 'disabled' : '' }}>
-                                            Reservar
-                                        </button>
-                                    </form>
+                                    @php
+                                        $hasReserved = auth()->user()->tripsAsPassenger->contains($trip->id);
+                                    @endphp
+
+                                    @if($hasReserved)
+                                        <span class="badge bg-success">Reservado</span>
+                                    @elseif($trip->available_seats > 0)
+                                        <form action="{{ route('payment.checkout', $trip->id) }}" method="POST">
+                                            @csrf
+                                            <button class="btn btn-sm btn-success">Reservar</button>
+                                        </form>
+                                    @else
+                                        <span class="badge bg-secondary">Sin cupos</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
