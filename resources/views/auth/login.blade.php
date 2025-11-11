@@ -13,6 +13,43 @@
     background-image: linear-gradient(180deg, var(--uv-red) 10%, var(--uv-red-dark) 100%) !important;
   }
 
+
+  /* Helpers accesibilidad: texto solo para lectores de pantalla */
+  .visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --- ACCESIBILIDAD: Principio Perceptible --- */
+/* Agregar texto alternativo en imágenes se hizo en HTML */
+/* Este bloque mejora el foco visible para navegación con teclado */
+
+:focus-visible {
+  outline: 3px solid var(--uv-red-dark) !important;
+  outline-offset: 2px;
+}
+
+a.small:focus-visible {
+  text-decoration: underline !important;
+}
+
+/* --- Mejora adicional: aplicar el mismo estilo a inputs y botones --- */
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--uv-red-dark) !important;
+  outline-offset: 2px;
+}
+
+
+
   /* Botón primario */
   .btn-primary{
     background-color: var(--uv-red) !important;
@@ -50,6 +87,7 @@
 </style>
 
 <head>
+    <meta name="description" content="Formulario de inicio de sesión de UniRide para conductores y pasajeros. Accede a tu cuenta de forma segura.">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -73,7 +111,9 @@
     </style>
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-primary" role="document">
+  <main class="container" role="main">
+
   <div class="container">
     <!-- Outer Row -->
     <div class="row justify-content-center">
@@ -82,15 +122,23 @@
           <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
+              <!-- Imagen descriptiva accesible para lectores de pantalla -->
+              <img src="{{ asset('img/login-driver.jpg') }}"
+              alt="Conductor sonriente representando el inicio de sesión en UniRide"
+              class="visually-hidden">
+
+
               <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
 
               <div class="col-lg-6">
                 <div class="p-5">
 
-                  <div class="text-center mb-4">
-                    <h1 class="h4 text-gray-900 mb-2">¡Bienvenido de nuevo!</h1>
+                  <header class="text-center mb-4">
+
+                    <h1 id="loginTitle" class="h4 text-gray-900 mb-2">¡Bienvenido de nuevo!</h1>
+
                     <p class="text-muted mb-0">Inicia sesión para continuar</p>
-                  </div>
+                  </header>
 
                   {{-- Mensajes del backend --}}
                   @if (session('error'))
@@ -103,24 +151,36 @@
                   @endif
 
                   <!-- Formulario de Login -->
-                  <form method="POST" action="{{ route('login') }}" class="user">
+                  <form method="POST" action="{{ route('login') }}" class="user" role="form" aria-labelledby="loginTitle">
+
                     @csrf
 
                     <div class="form-group">
-                      <input type="email" name="email" class="form-control form-control-user"
-                             placeholder="Correo electrónico" value="{{ old('email') }}" required autofocus>
+                      <label for="email" class="visually-hidden">Correo electrónico</label>
+                      <input type="email" id="email" name="email" class="form-control form-control-user"
+                            placeholder="Correo electrónico" value="{{ old('email') }}" required autofocus
+                            aria-describedby="emailError">
+
                       @error('email')
-                        <small class="text-danger">{{ $message }}</small>
+                      <div id="emailError" class="alert alert-danger mt-2" role="alert" aria-live="assertive">
+                        Error: {{ $message }}. Asegúrate de ingresar un correo válido.
+                      </div>
                       @enderror
                     </div>
 
                     <div class="form-group">
-                      <input type="password" name="password" class="form-control form-control-user"
-                             placeholder="Contraseña" required>
+                      <label for="password" class="visually-hidden">Contraseña</label>
+                      <input type="password" id="password" name="password" class="form-control form-control-user"
+                            placeholder="Contraseña" required aria-describedby="passwordError">
+
                       @error('password')
-                        <small class="text-danger">{{ $message }}</small>
-                      @enderror
+                    <div id="passwordError" class="alert alert-danger mt-2" role="alert" aria-live="assertive">
+                      Error: {{ $message }}. Verifica que la contraseña sea correcta.
                     </div>
+                    @enderror
+                    </div>
+
+
 
                     <div class="form-group d-flex align-items-center justify-content-between">
                       <div class="custom-control custom-checkbox small">
@@ -158,5 +218,6 @@
   <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
   <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    </main>
 </body>
 </html>
