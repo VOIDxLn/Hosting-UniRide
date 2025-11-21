@@ -16,12 +16,13 @@ use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route; 
 use Illuminate\Support\Facades\Auth;
 
-// 🔹 Login principal
+
+// Login principal
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// 🔹 Rutas para invitados
+// Rutas para invitados
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register']);
@@ -39,7 +40,7 @@ Route::middleware('guest')->group(function () {
 // 🔹 Rutas protegidas
 Route::middleware('auth')->group(function () {
 
-    // ✅ Dashboard según rol
+    // Dashboard según rol
     Route::get('/dashboard', function () {
         $user = auth()->user();
         $role = $user->roles->first()->name ?? null;
@@ -60,20 +61,20 @@ Route::middleware('auth')->group(function () {
         }
     })->name('dashboard');
 
-    // ✅ Recursos generales
+    // Recursos generales
     Route::resource('/products', ProductController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/trips', TripController::class);
 
-    // 💳 ✅ Rutas de pago con Stripe
+    // Rutas de pago con Stripe
     Route::post('/payment/create-session/{trip_id}', [PaymentController::class, 'checkout'])->name('payment.checkout');
     Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 
-    // ✅ Rutas Conductor
+    // Rutas Conductor
     Route::prefix('conductor')->name('conductor.')->group(function () {
 
-        // 🚗 Vehículos
+        // Vehículos
         Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
         Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
         Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
@@ -81,7 +82,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('vehicles.update');
         Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('vehicles.destroy');
 
-        // 🛣️ Viajes
+        // Viajes
         Route::get('/trips', [ConductorTripController::class, 'index'])->name('trips.index');
         Route::get('/trips/create', [ConductorTripController::class, 'create'])->name('trips.create');
         Route::post('/trips', [ConductorTripController::class, 'store'])->name('trips.store');
@@ -89,31 +90,31 @@ Route::middleware('auth')->group(function () {
         Route::put('/trips/{trip}', [ConductorTripController::class, 'update'])->name('trips.update');
         Route::delete('/trips/{trip}', [ConductorTripController::class, 'destroy'])->name('trips.destroy');
 
-        // ✅ Ruta para finalizar viaje (solo POST)
+        // Ruta para finalizar viaje (solo POST)
         Route::post('/trips/{trip}/finalizar', [ConductorTripController::class, 'finalizar'])
              ->name('trips.finalizar');
     });
 
-    // ✅ Rutas Pasajero
+    // Rutas Pasajero
     Route::prefix('pasajero')->name('pasajero.')->group(function () {
         Route::get('/trips', [PassengerTripController::class, 'index'])->name('trips.index');
         Route::post('/trips/{trip}/reserve', [PassengerTripController::class, 'reserve'])->name('trips.reserve');
         Route::delete('/trips/{trip}/cancel', [PassengerTripController::class, 'cancel'])->name('trips.cancel');
         Route::get('/my-trips', [PassengerTripController::class, 'myTrips'])->name('trips.my_trips');
 
-        // ✅ Reseñas pasajero
+        // Reseñas pasajero
         Route::get('/resenas', [ReviewController::class, 'index'])->name('resenas');
         Route::post('/resenas', [ReviewController::class, 'store'])->name('resenas.store');
     });
 
-    // ✅ Logout
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 // Rutas protegidas (solo usuarios autenticados)
 Route::middleware('auth')->group(function () {
 
-    // ✅ Dashboard según rol
+    // Dashboard según rol
     Route::get('/dashboard', function () {
         $user = auth()->user();
         $role = $user->roles->first()->name ?? null;
@@ -132,49 +133,54 @@ Route::middleware('auth')->group(function () {
         }
     })->name('dashboard');
 
-    // ✅ Recursos generales
+    // Recursos generales
     Route::resource('/products', ProductController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/trips', TripController::class);
 
-    // ✅ Rutas Conductor
-    // ✅ Rutas Conductor
-Route::prefix('conductor')->name('conductor.')->group(function () {
+    // Rutas Conductor
+    Route::prefix('conductor')->name('conductor.')->group(function () {
 
-    // 🚗 Vehículos
-    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
-    Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
-    Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
-    Route::get('/vehicles/{vehicle}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
-    Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('vehicles.update');
-    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('vehicles.destroy');
+        // Vehículos
+        Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+        Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+        Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
+        Route::get('/vehicles/{vehicle}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
+        Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('vehicles.update');
+        Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('vehicles.destroy');
 
-    // 🛣️ Viajes
-    Route::get('/trips', [ConductorTripController::class, 'index'])->name('trips.index');
-    Route::get('/trips/create', [ConductorTripController::class, 'create'])->name('trips.create');
-    Route::post('/trips', [ConductorTripController::class, 'store'])->name('trips.store');
-    Route::get('/trips/{trip}/edit', [ConductorTripController::class, 'edit'])->name('trips.edit');
-    Route::put('/trips/{trip}', [ConductorTripController::class, 'update'])->name('trips.update');
-    Route::delete('/trips/{trip}', [ConductorTripController::class, 'destroy'])->name('trips.destroy');
+        // Viajes
+        Route::get('/trips', [ConductorTripController::class, 'index'])->name('trips.index');
+        Route::get('/trips/create', [ConductorTripController::class, 'create'])->name('trips.create');
+        Route::post('/trips', [ConductorTripController::class, 'store'])->name('trips.store');
+        Route::get('/trips/{trip}/edit', [ConductorTripController::class, 'edit'])->name('trips.edit');
+        Route::put('/trips/{trip}', [ConductorTripController::class, 'update'])->name('trips.update');
+        Route::delete('/trips/{trip}', [ConductorTripController::class, 'destroy'])->name('trips.destroy');
 
-    // ✅ Ruta para finalizar viaje (solo POST)
-    Route::post('/trips/{trip}/finalizar', [ConductorTripController::class, 'finalizar'])
-         ->name('trips.finalizar');
-});
+        // Ruta para finalizar viaje (solo POST)
+        Route::post('/trips/{trip}/finalizar', [ConductorTripController::class, 'finalizar'])
+             ->name('trips.finalizar');
+    });
 
-
-    // ✅ Rutas Pasajero
+    // Rutas Pasajero
     Route::prefix('pasajero')->name('pasajero.')->group(function () {
         Route::get('/trips', [PassengerTripController::class, 'index'])->name('trips.index');
         Route::post('/trips/{trip}/reserve', [PassengerTripController::class, 'reserve'])->name('trips.reserve');
         Route::delete('/trips/{trip}/cancel', [PassengerTripController::class, 'cancel'])->name('trips.cancel');
         Route::get('/my-trips', [PassengerTripController::class, 'myTrips'])->name('trips.my_trips');
 
-        // ✅ Reseñas pasajero
+        // Reseñas pasajero
         Route::get('/resenas', [ReviewController::class, 'index'])->name('resenas');
         Route::post('/resenas', [ReviewController::class, 'store'])->name('resenas.store');
     });
 
-    // ✅ Logout
+    // 🔹 RUTA PERFIL (AGREGADA)
+    // Perfil del usuario
+    Route::get('/user/perfil', [UserController::class, 'perfil'])->name('user.perfil');
+    Route::put('/perfil/actualizar', [App\Http\Controllers\ProfileController::class, 'update'])
+    ->name('perfil.update');
+
+
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

@@ -34,8 +34,8 @@
 
         /* Botón de usuario superior con nombre */
         .user-btn {
-            color: #8f1d22 !important;           /* texto inicial rojo */
-            background-color: white !important;  /* fondo inicial blanco */
+            color: #8f1d22 !important;
+            background-color: white !important;
             border: 2px solid #8f1d22;
             border-radius: 30px;
             padding: 6px 14px;
@@ -46,13 +46,11 @@
             justify-content: center;
         }
 
-        /* Icono dentro del botón */
         .user-btn i {
             margin-right: 8px;
             font-size: 20px;
         }
 
-        /* Hover: fondo rojo y texto blanco */
         .user-btn:hover {
             background-color: #8f1d22 !important;
             color: white !important;
@@ -60,7 +58,6 @@
             text-decoration: none;
         }
 
-        /* Asegura que el icono también cambie a blanco */
         .user-btn:hover i {
             color: white !important;
         }
@@ -72,15 +69,12 @@
 
 <div id="wrapper">
 
-    @include('layouts.partials.sidebar') <!-- Sidebar -->
+    @include('layouts.partials.sidebar')
 
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
         <div id="content">
 
-            <!-- Topbar -->
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                 <!-- Botón menú responsive -->
@@ -88,24 +82,35 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Menú de usuario -->
                 <ul class="navbar-nav ml-auto">
+
                     <div class="topbar-divider d-none d-sm-block"></div>
 
                     <!-- User Dropdown -->
                     <li class="nav-item dropdown no-arrow">
-                        <a class="nav-link dropdown-toggle user-btn" href="#" id="userDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle user-btn"
+                           href="javascript:void(0)"
+                           id="userDropdown"
+                           role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false">
+
                             <i class="fas fa-user-circle"></i>
                             <span class="mr-2 d-lg-inline">{{ Auth::user()->name }}</span>
                         </a>
+
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                              aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="#">
+
+                            <!-- ENLACE CORREGIDO -->
+                            <a class="dropdown-item" href="{{ route('user.perfil') }}">
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Perfil
                             </a>
+
                             <div class="dropdown-divider"></div>
+
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Salir
@@ -114,22 +119,17 @@
                     </li>
                 </ul>
             </nav>
-            <!-- End of Topbar -->
 
             @include('layouts.partials.content')
 
         </div>
-        <!-- End of Main Content -->
 
         @include('layouts.partials.footer')
 
     </div>
-    <!-- End of Content Wrapper -->
 
 </div>
-<!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
@@ -149,7 +149,7 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
                 <form action="{{ route('logout') }}" method="POST">
-                     @csrf
+                    @csrf
                     <button type="submit" class="btn btn-primary">Cerrar Sesión</button>
                 </form>
             </div>

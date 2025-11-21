@@ -11,14 +11,14 @@
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link href="https://fonts.bunny.net/css?family=Nunito:400,600,700" rel="stylesheet">
 
-  <!-- Bootstrap 5 (si usas Vite, puedes quitar estas 2 líneas y dejar tus @vite) -->
+  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Brand + Navbar UniRide -->
   <style>
     :root{
-      --uv-red:#8f1d22;      /* base */
-      --uv-red-dark:#6b1216; /* hover/focus */
+      --uv-red:#8f1d22;
+      --uv-red-dark:#6b1216;
     }
     .navbar-uv{ background:var(--uv-red) !important; }
     .navbar-uv .navbar-brand,
@@ -34,7 +34,6 @@
       background:var(--uv-red-dark) !important;
       border-color:var(--uv-red-dark) !important;
     }
-    /* Espaciado consistente del contenido */
     main { padding-block: 1.5rem; }
   </style>
 
@@ -69,14 +68,24 @@
                    aria-haspopup="true" aria-expanded="false" v-pre>
                   {{ Auth::user()->name }}
                 </a>
+
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+                  <!-- ✔ NUEVO: botón PERFIL -->
+                  <a class="dropdown-item" href="{{ route('user.perfil') }}">
+                    Perfil
+                  </a>
+
+                  <!-- Cerrar sesión -->
                   <a class="dropdown-item" href="{{ route('logout') }}"
                      onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     Cerrar sesión
                   </a>
+
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                   </form>
+
                 </div>
               </li>
             @endguest
@@ -91,7 +100,7 @@
     </main>
   </div>
 
-  <!-- Bootstrap JS (si usas Vite, puedes quitar esta línea) -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   @stack('scripts')

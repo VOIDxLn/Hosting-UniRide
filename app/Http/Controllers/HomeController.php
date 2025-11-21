@@ -13,23 +13,29 @@ class HomeController extends Controller
     }
 
     public function index()
-    {
-        $user = Auth::user();
+{
+    // Cargar relaciones: roles + vehicles
+    $user = Auth::user()->load(['roles', 'vehicles']);
 
-        // Redirigir según rol
-switch ($user->role) {
-    case 'Admin':
-        return view('layouts.admin', compact('user'));
-    case 'Conductor':
-        return view('layouts.conductor', compact('user'));
-    case 'Pasajero':
-        return view('layouts.pasajero', compact('user'));
-    default:
-        // Cerrar sesión y redirigir al login
-        auth()->logout();
-        return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol válido.');
-}
+    // Obtener el rol (el usuario solo tiene 1, según tu tabla)
+    $rol = $user->roles->first()->name ?? null;
+
+    switch ($rol) {
+        case 'Admin':
+            return view('layouts.admin', compact('user'));
+
+        case 'Conductor':
+            return view('layouts.conductor', compact('user'));
+
+        case 'Pasajero':
+            return view('layouts.pasajero', compact('user'));
+
+        default:
+            auth()->logout();
+            return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol válido.');
     }
+}
+
 }
 
 

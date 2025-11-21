@@ -15,6 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telefono',
     ];
 
     protected $hidden = [
@@ -36,10 +37,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-    // ✅ Verificar si el usuario tiene un rol específico
+    // ✅ Verificar si el usuario tiene un rol (sin importar mayúsculas/minúsculas)
     public function hasRole($role)
     {
-        return $this->roles->contains('name', $role);
+        return $this->roles->contains(function ($r) use ($role) {
+            return strtolower($r->name) === strtolower($role);
+        });
     }
 
     // ✅ Vehículos registrados por el usuario (si es conductor)
@@ -62,11 +65,8 @@ class User extends Authenticatable
     }
 
     // ✅ Viajes donde el usuario es CONDUCTOR
-    // ⚠ Asegúrate de que en tu tabla `trips`, el conductor se almacene en la columna 'user_id'
     public function tripsAsDriver()
     {
         return $this->hasMany(Trip::class, 'user_id');
     }
 }
-
-
