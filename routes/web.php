@@ -181,6 +181,14 @@ Route::middleware('auth')->group(function () {
     ->name('perfil.update');
 
 
+    // Reseña en perfil conductor
+    Route::middleware('auth')->group(function () {
+    Route::get('/conductor/perfil', [App\Http\Controllers\Conductor\ConductorProfileController::class, 'index'])
+        ->name('conductor.perfil');
+    });
+
+
+
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

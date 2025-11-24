@@ -69,4 +69,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Trip::class, 'user_id');
     }
+
+
+    // ✅ Comentarios realizados por el usuario
+    public function driverReviews()
+    {
+        return $this->hasMany(Review::class, 'driver_id');
+    }
+
+    // Reseñas donde el usuario es PASAJERO
+    public function passengerReviews()
+    {
+        return $this->hasMany(Review::class, 'passenger_id');
+    }
+
 }

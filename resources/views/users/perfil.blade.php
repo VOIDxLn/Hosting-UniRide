@@ -72,6 +72,48 @@
             Editar Perfil
         </button>
 
+        <!--Seccion de reseñas en perfil conductor: -->
+
+        <hr class="mt-4">
+
+        {{-- ⭐ Reseñas del conductor --}}
+        @if(isset($reviews) && $reviews->count() > 0)
+            <h4 class="mt-4">Reseñas recibidas</h4>
+
+            {{-- Calificación promedio --}}
+            @php
+                $promedio = round($reviews->avg('rating'), 1);
+            @endphp
+
+            <p><strong>Calificación promedio:</strong>
+                {{ $promedio }} / 5 ⭐
+            </p>
+
+            {{-- Lista de reseñas --}}
+            @foreach($reviews as $review)
+                <div class="p-3 mt-3 border rounded" style="background: #f5f5f5;">
+                    <p><strong>Pasajero:</strong> {{ $review->passenger->name ?? 'Desconocido' }}</p>
+                    <p><strong>Calificación:</strong> {{ $review->rating }} ⭐</p>
+                    <p><strong>Comentario:</strong> {{ $review->comment ?? 'Sin comentario' }}</p>
+
+                    @if($review->trip)
+                        <p class="text-muted" style="font-size: 14px;">
+                            Viaje: {{ $review->trip->origin }} → {{ $review->trip->destination }}
+                        </p>
+                    @endif
+
+                    <span style="font-size: 12px;" class="text-muted">
+                        Publicado el: {{ $review->created_at->format('Y-m-d') }}
+                    </span>
+                </div>
+            @endforeach
+
+        @else
+            <h4 class="mt-4">Reseñas recibidas</h4>
+            <p class="text-muted">Aún no tienes reseñas.</p>
+        @endif
+
+
     </div>
 </div>
 
