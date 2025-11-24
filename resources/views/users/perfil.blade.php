@@ -127,7 +127,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editar Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
                 <div class="modal-body">
@@ -147,6 +149,11 @@
                     <div class="mb-3">
                         <label class="form-label">Nueva contraseña (opcional)</label>
                         <input type="password" name="password" class="form-control">
+
+                        {{-- Mensaje de advertencia --}}
+                        <small class="text-primary mt-1 d-block">
+                            La contraseña debe tener 6 o más caracteres.
+                        </small>
                     </div>
 
                     {{-- Confirmación --}}
@@ -157,7 +164,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Guardar cambios</button>
                 </div>
             </div>
