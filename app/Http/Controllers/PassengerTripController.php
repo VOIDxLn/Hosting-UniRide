@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Trip;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\ReservaCreadaMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class PassengerTripController extends Controller
 {

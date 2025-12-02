@@ -23,18 +23,27 @@ class TripController extends Controller
     // ➕ Crear un nuevo viaje
     public function store(Request $request)
     {
-        $request->validate([
-            'departure_time' => 'required|date',
-            'origin' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'available_seats' => 'required|integer|min:0',
-        ]);
+    $request->validate([
+        'departure_time' => 'required|date',
+        'origin' => 'required|string|max:255',
+        'destination' => 'required|string|max:255',
+        'price' => 'required|numeric|min:0',
+        'available_seats' => 'required|integer|min:0',
+    ]);
 
-        Trip::create($request->all());
+    Trip::create([
+        'user_id' => Auth::id(), // <--- ASIGNAR CONDUCTOR 🔥
+        'departure_time' => $request->departure_time,
+        'origin' => $request->origin,
+        'destination' => $request->destination,
+        'price' => $request->price,
+        'available_seats' => $request->available_seats,
+        'status' => 'Pendiente', // opcional pero recomendado
+    ]);
 
-        return redirect()->route('trips.index')->with('success', 'Viaje creado correctamente.');
+    return redirect()->route('trips.index')->with('success', 'Viaje creado correctamente.');
     }
+
 
     // ✏️ Actualizar viaje existente
     public function update(Request $request, Trip $trip)

@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use App\Models\Trip;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservaCreadaMail;
 
 class PaymentController extends Controller
 {
@@ -18,6 +20,7 @@ class PaymentController extends Controller
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        // Enviar metadata para saber quién pagó y qué viaje es
         $session = Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
@@ -26,12 +29,16 @@ class PaymentController extends Controller
                     'product_data' => [
                         'name' => 'Reserva de viaje #' . $trip->id,
                     ],
-                    'unit_amount' => $trip->price * 100, // en centavos
+                    'unit_amount' => $trip->price * 100,
                 ],
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => route('payment.success', ['trip_id' => $trip->id]),
+            'metadata' => [
+                'trip_id' => $trip->id,
+                'user_id' => Auth::id(),
+            ],
+            'success_url' => route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('payment.cancel'),
         ]);
 
@@ -39,28 +46,57 @@ class PaymentController extends Controller
     }
 
     public function success(Request $request)
-{
-    $trip_id = $request->trip_id; // Obtener de la query string
-    $trip = Trip::findOrFail($trip_id);
+    {
+        // Obtener session_id enviado por Stripe
+        $sessionId = $request->get('session_id');
 
-    // Registrar el pago
-    DB::table('trip_user')->insert([
-        'trip_id' => $trip->id,
-        'user_id' => Auth::id(),
-        'status' => 'pagado',
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
+        if (!$sessionId) {
+            return redirect()->route('home')->with('error', 'Error validando el pago.');
+        }
 
-    // Descontar un cupo
-    $trip->decrement('available_seats');
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $session = Session::retrieve($sessionId);
 
-    return redirect()->route('pasajero.trips.my_trips')->with('success', 'Pago exitoso, tu reserva fue confirmada ');
-}
+        // Recuperar metadata enviada
+        $trip_id = $session->metadata->trip_id;
+        $user_id = $session->metadata->user_id;
 
+        $trip = Trip::findOrFail($trip_id);
+        $user = User::findOrFail($user_id);
+
+        // PREVENIR reservas duplicadas
+        $exists = DB::table('trip_user')
+            ->where('trip_id', $trip->id)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if (!$exists) {
+            // Registrar pago y reserva
+            DB::table('trip_user')->insert([
+                'trip_id' => $trip->id,
+                'user_id' => $user->id,
+                'status' => 'pagado',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Disminuir cupo
+            $trip->decrement('available_seats');
+
+            // ENVIAR CORREO AL CONDUCTOR
+            if ($trip->driver && $trip->driver->email) {
+                Mail::to($trip->driver->email)->send(
+                    new ReservaCreadaMail($trip, $user)
+                );
+            }
+        }
+
+        return redirect()->route('pasajero.trips.my_trips')
+            ->with('success', 'Pago exitoso. Tu reserva fue confirmada.');
+    }
 
     public function cancel()
     {
-        return redirect()->route('home')->with('error', 'Pago cancelado ');
+        return redirect()->route('home')->with('error', 'Pago cancelado.');
     }
 }
