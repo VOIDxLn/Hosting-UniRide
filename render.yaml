@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: unride
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: Dockerfile
+    envVars:
+      APP_ENV: production
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: false
+      DB_CONNECTION: mysql
