@@ -5,6 +5,7 @@ services:
     region: oregon
     plan: free
     dockerfilePath: Dockerfile
+
     envVars:
       - key: APP_ENV
         value: production
@@ -13,38 +14,27 @@ services:
         value: false
 
       - key: APP_KEY
-        generateValue: true   # Render la generará automáticamente si no existe
+        generateValue: true
 
       # ------------ DATABASE VARS ------------
       - key: DB_CONNECTION
-        value: mysql
+        value: pgsql
 
       - key: DB_HOST
-        fromDatabase:
-          name: unride-db
-          property: host
+        value: dpg-d4o8ng63jp1c73f9j1kg-a
 
       - key: DB_PORT
-        fromDatabase:
-          name: unride-db
-          property: port
+        value: 5432
 
       - key: DB_DATABASE
-        fromDatabase:
-          name: unride-db
-          property: database
+        value: uniridedb
 
       - key: DB_USERNAME
-        fromDatabase:
-          name: unride-db
-          property: user
+        value: uniridedb_user
 
       - key: DB_PASSWORD
-        fromDatabase:
-          name: unride-db
-          property: password
+        value: 84nwhR7yPjFsudNurj5JhStigCgXRa26
 
-    # Ejecutar migraciones automáticamente al iniciar
     commands:
       start: |
         php artisan migrate --force
