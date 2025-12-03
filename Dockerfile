@@ -28,8 +28,8 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Laravel will run with php-fpm (Render handles the web server)
-CMD ["php-fpm"]
+# Start Laravel with HTTP server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
 
