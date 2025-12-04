@@ -36,5 +36,9 @@ RUN npm run build
 # Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
+# ============================
+RUN php artisan migrate --force && \
+    php artisan db:seed --force
+
 # Laravel server (Render needs an HTTP server)
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
