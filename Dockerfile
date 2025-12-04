@@ -36,5 +36,9 @@ RUN npm run build
 # Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Laravel server (Render needs an HTTP server)
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+# Copiar ENTRYPOINT al contenedor
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 🚀 Reemplazar el CMD para usar entrypoint
+CMD ["/entrypoint.sh"]
