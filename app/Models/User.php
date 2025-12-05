@@ -28,16 +28,18 @@ class User extends Authenticatable
     ];
 
     /* ============================
-     * ✅ RELACIONES
+     * RELACIONES
      * ============================ */
 
-    // ✅ Relación muchos a muchos con roles
+    // Relación muchos a muchos con roles
+    // En app/Models/User.php (CÓDIGO CORREGIDO)
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        // ESPECIFICAMOS explícitamente la tabla pivote 'role_user'
+        return $this->belongsToMany(Role::class, 'role_user'); 
     }
 
-    // ✅ Verificar si el usuario tiene un rol (sin importar mayúsculas/minúsculas)
+    // Verificar si el usuario tiene un rol (sin importar mayúsculas/minúsculas)
     public function hasRole($role)
     {
         return $this->roles->contains(function ($r) use ($role) {
@@ -45,33 +47,33 @@ class User extends Authenticatable
         });
     }
 
-    // ✅ Vehículos registrados por el usuario (si es conductor)
+    // Vehículos registrados por el usuario (si es conductor)
     public function vehicles()
     {
         return $this->hasMany(Vehicle::class);
     }
 
-    // ✅ Viajes donde el usuario fue PASAJERO (tabla pivote trip_user)
+    // Viajes donde el usuario fue PASAJERO (tabla pivote trip_user)
     public function tripsAsPassenger()
     {
         return $this->belongsToMany(Trip::class, 'trip_user', 'user_id', 'trip_id')
                     ->withTimestamps();
     }
 
-    // ✅ Alias para acceder a los viajes como pasajero usando $user->trips
+    // Alias para acceder a los viajes como pasajero usando $user->trips
     public function trips()
     {
         return $this->tripsAsPassenger();
     }
 
-    // ✅ Viajes donde el usuario es CONDUCTOR
+    // Viajes donde el usuario es CONDUCTOR
     public function tripsAsDriver()
     {
         return $this->hasMany(Trip::class, 'user_id');
     }
 
 
-    // ✅ Comentarios realizados por el usuario
+    // Comentarios realizados por el usuario
     public function driverReviews()
     {
         return $this->hasMany(Review::class, 'driver_id');
