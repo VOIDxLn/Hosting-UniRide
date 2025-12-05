@@ -26,14 +26,18 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if (!$user->roles || $user->roles->isEmpty()) {
-            auth()->logout();
-            return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol asignado.');
-        }
+    // AÑADE ESTA LÍNEA para forzar la carga de la relación 'roles'
+    $user->load('roles'); 
 
-        // Todos los usuarios válidos van al mismo dashboard
-        return redirect()->route('dashboard');
+    // Ahora sí, verifica si la relación se cargó y tiene elementos
+    if (!$user->roles || $user->roles->isEmpty()) {
+        auth()->logout();
+        return redirect()->route('login')->with('error', 'Tu cuenta no tiene un rol asignado.');
     }
+
+    // El resto de la lógica...
+    return redirect()->route('dashboard');
+}
 
     /**
      * Redirige al login después de cerrar sesión y borra la sesión 'remember me'
