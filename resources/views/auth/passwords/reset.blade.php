@@ -6,8 +6,8 @@
   {{-- Colores de marca (sin romper Bootstrap) --}}
   <style>
     :root{
-      --uv-red: #8f1d22;      /* base */
-      --uv-red-dark: #6b1216; /* hover/focus */
+      --uv-red: #FF6161;      /* base */
+      --uv-red-dark: #F53131; /* hover/focus */
     }
     .card-uv{border-radius:1.25rem!important;border:1px solid #e5e7eb!important;box-shadow:0 10px 25px rgba(0,0,0,.06)!important;overflow:hidden;}
     .btn-uv{background-color:var(--uv-red)!important;border-color:var(--uv-red)!important;}
