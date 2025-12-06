@@ -12,8 +12,8 @@
 
   <style>
     :root{
-      --uv-red:#8f1d22;        /* base sobrio */
-      --uv-red-dark:#6b1216;   /* hover/focus */
+      --uv-red:#FF6161;        /* base sobrio */
+      --uv-red-dark:#F53131;   /* hover/focus */
       --text-strong:#111827;   /* casi negro */
       --muted:#4b5563;         /* gris 600 */
     }
