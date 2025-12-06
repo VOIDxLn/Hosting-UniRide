@@ -19,7 +19,7 @@
     <style>
         /* Colores del sidebar para pasajero */
         .sidebar .sidebar-brand {
-            background-color: #FF6161 !important; /* rojo */
+            background-color: #8f1d22 !important; /* rojo */
         }
 
         .sidebar .sidebar-brand-text {
@@ -34,9 +34,9 @@
 
         /* Botón de usuario con nombre completo y hover rojo */
         .user-btn {
-            color: #FF6161 !important;
+            color: #8f1d22 !important;
             background-color: white !important;
-            border: 2px solid #FF6161;
+            border: 2px solid #8f1d22;
             border-radius: 30px;
             padding: 6px 14px; /* ancho adaptativo */
             transition: all 0.3s ease;
@@ -53,7 +53,7 @@
         }
 
         .user-btn:hover {
-            background-color: #FF6161 !important;
+            background-color: #8f1d22 !important;
             color: white !important;
             transform: scale(1.05);
             text-decoration: none;
