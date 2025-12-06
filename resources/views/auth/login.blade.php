@@ -4,7 +4,7 @@
   /* ====== Paleta Univalle ====== */
   :root{
   /* Rojo más sobrio */
-  --uv-red: #FF6161;      /* base */
+  --uv-red: #F28383;      /* base */
   --uv-red-dark: #F53131; /* hover/focus */
   }
 
