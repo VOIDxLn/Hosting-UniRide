@@ -19,11 +19,11 @@
     <style>
         /* Sidebar rojo uniforme */
         .sidebar {
-            background-color: #8f1d22 !important;
+            background-color: #FF6161 !important;
         }
 
         .sidebar .sidebar-brand {
-            background-color: #8f1d22 !important;
+            background-color: #FF6161 !important;
         }
 
         .sidebar .sidebar-brand-text {
@@ -34,9 +34,9 @@
 
         /* Botón de usuario superior con nombre */
         .user-btn {
-            color: #8f1d22 !important;
+            color: #FF6161 !important;
             background-color: white !important;
-            border: 2px solid #8f1d22;
+            border: 2px solid #FF6161;
             border-radius: 30px;
             padding: 6px 14px;
             transition: all 0.3s ease;
@@ -52,7 +52,7 @@
         }
 
         .user-btn:hover {
-            background-color: #8f1d22 !important;
+            background-color: #FF6161 !important;
             color: white !important;
             transform: scale(1.05);
             text-decoration: none;
