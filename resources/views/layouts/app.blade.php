@@ -17,8 +17,8 @@
   <!-- Brand + Navbar UniRide -->
   <style>
     :root{
-      --uv-red:#8f1d22;
-      --uv-red-dark:#6b1216;
+      --uv-red:#FF6161;
+      --uv-red-dark:#F53131;
     }
     .navbar-uv{ background:var(--uv-red) !important; }
     .navbar-uv .navbar-brand,
