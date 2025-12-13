@@ -18,8 +18,9 @@ WORKDIR /var/www/html
 COPY . .
 
 # *** INICIO DE LA CORRECCIÓN ***
-# Copia .env.example a .env para que los comandos de Artisan (como key:generate) funcionen
-RUN cp .env.example .env
+COPY render-build.sh /render-build.sh
+RUN chmod +x /render-build.sh
+RUN /render-build.sh
 # *** FIN DE LA CORRECCIÓN ***
 
 COPY render-build.sh /render-build.sh
