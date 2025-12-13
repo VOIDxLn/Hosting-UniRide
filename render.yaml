@@ -38,9 +38,11 @@ services:
       # ------------ STRIPE VARS ------------
       - key: STRIPE_SECRET
         value: sk_test_51SO3WH339npoHN8QViWhXoA5zDyNdYjovGSd9hhi7mb2HqJ1OLHZMYHWiU9M5RkHJyZVxSI5d0IZtSRB38zSdgnV00PeC9mSxf
+        sync: false
     
       - key: STRIPE_KEY
         value: pk_test_51SO3WH339npoHN8Q84X5NCVGpRLHY6IhhM294mZoAkiOW0T1AAyS97VeOT6enSVejcG8FERZYzGAU2rdP0EATIxH00mYdyf2wC
+        sync: false
 
     commands:
       start: |
