@@ -8,15 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('trip_user', function (Blueprint $table) {
-            $table->id();
-            
-            // Llaves foráneas
-            $table->foreignId('trip_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('trip_user')) {
+            Schema::create('trip_user', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('trip_id')->constrained()->onDelete('cascade');
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
@@ -24,3 +23,4 @@ return new class extends Migration
         Schema::dropIfExists('trip_user');
     }
 };
+
