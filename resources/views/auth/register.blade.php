@@ -106,6 +106,17 @@
               @error('email') <span class="invalid-feedback"><strong>{{ $message }}</strong></span> @enderror
             </div>
 
+            <div class="form-group mb-3">
+              <label for="telefono" class="small text-muted mb-1">Número telefónico</label>
+              <input id="telefono" type="text"
+                    class="form-control form-control-user @error('telefono') is-invalid @enderror"
+                    name="telefono" value="{{ old('telefono') }}" required
+                    placeholder="Ej. 5512345678">
+              @error('telefono')
+                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+              @enderror
+            </div>
+
             {{-- Contraseña (ancho completo) --}}
             <div class="form-group mb-3">
               <label for="password" class="small text-muted mb-1">Contraseña</label>
