@@ -21,22 +21,26 @@ class PassengerTripController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Trip::query()->where('available_seats', '>', 0);
-
+        $query = Trip::with('driver') // 👈 CLAVE
+            ->where('available_seats', '>', 0);
+    
         if ($request->filled('date')) {
             $query->whereDate('departure_time', $request->date);
         }
+    
         if ($request->filled('origin')) {
             $query->where('origin', 'like', "%{$request->origin}%");
         }
+    
         if ($request->filled('destination')) {
             $query->where('destination', 'like', "%{$request->destination}%");
         }
-
+    
         $trips = $query->orderBy('departure_time')->get();
-
+    
         return view('pasajero.trips.index', compact('trips'));
     }
+
 
     /**
      * Reservar un viaje
