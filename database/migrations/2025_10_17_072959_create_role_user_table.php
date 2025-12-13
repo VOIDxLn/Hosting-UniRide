@@ -6,26 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateRoleUserTable extends Migration
 {
-    /**
-     * Run the migrations. TABLA PIVOTE
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('role_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('role_user')) {
+            Schema::create('role_user', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->foreignId('role_id')->constrained()->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('role_user');
