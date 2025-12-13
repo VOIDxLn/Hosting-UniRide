@@ -6,28 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateVehiclesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('vehicles', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('user_id')->constrained()->onDelete('cascade'); // conductor
-    $table->string('brand');
-    $table->string('model');
-    $table->string('plate')->unique();
-    $table->timestamps();
-});
+        if (!Schema::hasTable('vehicles')) {
+            Schema::create('vehicles', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->string('brand');
+                $table->string('model');
+                $table->string('plate')->unique();
+                $table->timestamps();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('vehicles');
