@@ -6,23 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 class AddTelefonoCorrectamenteToUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('telefono')->nullable()->after('email');
-    });
-}
+    {
+        if (
+            Schema::hasTable('users') &&
+            !Schema::hasColumn('users', 'telefono')
+        ) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('telefono')->nullable()->after('email');
+            });
+        }
+    }
 
-public function down()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('telefono');
-    });
-}
-
+    public function down()
+    {
+        if (
+            Schema::hasTable('users') &&
+            Schema::hasColumn('users', 'telefono')
+        ) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('telefono');
+            });
+        }
+    }
 }
