@@ -1,83 +1,85 @@
-@extends('layouts.admin')
+@extends('layouts.pasajero')
 
-@section('titulo')
-<span>Viajes</span>
-<a href="" class="btn btn-primary btn-circle" data-toggle="modal" data-target="#createMdl">
-    <i class="fas fa-plus"></i>
-</a>
-@endsection
+@section('content')
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Viajes Disponibles</h1>
 
-@section('contenido')
+    <!-- Filtros -->
+    <form method="GET" action="{{ route('pasajero.trips.index') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="date" name="date" class="form-control" value="{{ request('date') }}" placeholder="Fecha">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="origin" class="form-control" value="{{ request('origin') }}" placeholder="Origen">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="destination" class="form-control" value="{{ request('destination') }}" placeholder="Destino">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Filtrar</button>
+            </div>
+        </div>
+    </form>
 
-@include('trips.modals.create')
-@include('trips.modals.update')
-@include('trips.modals.delete')
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            @if($trips->isEmpty())
+                <p>No hay viajes disponibles.</p>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Hora de salida</th>
+                                <th>Origen</th>
+                                <th>Destino</th>
+                                <th>Costo</th>
+                                <th>Cupos disponibles</th>
+                                <th>Conductor</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($trips as $trip)
+                            <tr>
+                                <td>{{ $trip->departure_time }}</td>
+                                <td>{{ $trip->origin }}</td>
+                                <td>{{ $trip->destination }}</td>
+                                <td>${{ number_format($trip->price, 0, ',', '.') }}</td>
+                                <td>{{ $trip->available_seats }}</td>
+                                <td>
+                                    @if($trip->driver)
+                                        <a href="{{ route('perfil.publico', $trip->driver->id) }}">
+                                            {{ $trip->driver->name }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">No asignado</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @php
+                                        $hasReserved = auth()->user()->tripsAsPassenger->contains($trip->id);
+                                    @endphp
 
-<div class="card">
-    <div class="card-body">
-        <table id="dt-trips" class="table table-striped table-bordered dts">
-            <thead>
-            <tr class="text-center">
-                <th>Hora de Salida</th>
-                <th>Origen</th>
-                <th>Destino</th>
-                <th>Costo</th>
-                <th>Cupos Libres</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($trips as $trip)
-            <tr class="text-center">
-                <td>{{ $trip->departure_time }}</td>
-                <td>{{ $trip->origin }}</td>
-                <td>{{ $trip->destination }}</td>
-                <td>${{ $trip->price }}</td>
-                <td>{{ $trip->available_seats }}</td>
-                <td>
-                    <a href="#" class="edit-form-data" data-toggle="modal" data-target="#editMdl"
-                       onclick="editTrip({{ $trip }})">
-                        <i class="far fa-edit"></i>
-                    </a>
-
-                    <a href="#" class="delete-form-data" data-toggle="modal" data-target="#deleteMdl"
-                       data-id="{{ $trip->id }}">
-                        <i class="far fa-trash-alt"></i>
-                    </a>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
+                                    @if($hasReserved)
+                                        <span class="badge bg-success">Reservado</span>
+                                    @elseif($trip->available_seats > 0)
+                                        <form action="{{ route('payment.checkout', $trip->id) }}" method="POST">
+                                            @csrf
+                                            <button class="btn btn-sm btn-success">Reservar</button>
+                                        </form>
+                                    @else
+                                        <span class="badge bg-secondary">Sin cupos</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
-
 @endsection
-
-@push('scripts')
-<script>
-function editTrip(trip){
-    $("#editTripFrm").attr('action', `/trips/${trip.id}`);
-    $("#editTripFrm #departure_time").val(trip.departure_time);
-    $("#editTripFrm #origin").val(trip.origin);
-    $("#editTripFrm #destination").val(trip.destination);
-    $("#editTripFrm #price").val(trip.price);
-    $("#editTripFrm #available_seats").val(trip.available_seats);
-}
-
-// Modal para eliminar correctamente
-$('#deleteMdl').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var tripId = button.data('id'); // <- Muy importante
-    $('#deleteTripFrm').attr('action', `/trips/${tripId}`);
-});
-
-// Inicializar DataTables
-$(document).ready(function(){
-    $('#dt-trips').DataTable({
-        "ordering": true,
-        "searching": true
-    });
-});
-</script>
-@endpush
