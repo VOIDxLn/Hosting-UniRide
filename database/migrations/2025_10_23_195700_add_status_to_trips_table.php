@@ -7,17 +7,28 @@ use Illuminate\Support\Facades\Schema;
 class AddStatusToTripsTable extends Migration
 {
     public function up()
-{
-    Schema::table('trips', function (Blueprint $table) {
-        $table->string('status')->default('Pendiente')->after('available_seats');
-    });
-}
+    {
+        if (
+            Schema::hasTable('trips') &&
+            !Schema::hasColumn('trips', 'status')
+        ) {
+            Schema::table('trips', function (Blueprint $table) {
+                $table->string('status')
+                    ->default('Pendiente')
+                    ->after('available_seats');
+            });
+        }
+    }
 
-public function down()
-{
-    Schema::table('trips', function (Blueprint $table) {
-        $table->dropColumn('status');
-    });
-}
-
+    public function down()
+    {
+        if (
+            Schema::hasTable('trips') &&
+            Schema::hasColumn('trips', 'status')
+        ) {
+            Schema::table('trips', function (Blueprint $table) {
+                $table->dropColumn('status');
+            });
+        }
+    }
 }
