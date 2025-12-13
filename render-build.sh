@@ -7,7 +7,6 @@ composer install --no-dev --optimize-autoloader
 # 2. Generar la llave de la aplicación (solo si no está ya presente y es necesaria)
 # Si tu APP_KEY ya está configurada en Render, puedes omitir esta línea,
 # pero es seguro dejarla si la necesitas.
-php artisan key:generate
 
 # 3. LIMPIEZA DE CACHÉ (CRÍTICA)
 # Esto obliga a Laravel a leer los archivos LoginController.php y User.php corregidos
