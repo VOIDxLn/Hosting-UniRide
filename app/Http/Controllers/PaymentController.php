@@ -16,12 +16,6 @@ class PaymentController extends Controller
 {
     public function checkout($trip_id)
     {
-
-        dd([
-        'ENV' => env('STRIPE_SECRET'),
-        'CONFIG' => config('services.stripe.secret'),
-        'SERVICES' => config('services'),
-        ]);
     
         $trip = Trip::findOrFail($trip_id);
     
