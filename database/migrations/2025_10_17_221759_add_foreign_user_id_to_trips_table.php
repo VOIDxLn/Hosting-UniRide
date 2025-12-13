@@ -8,22 +8,40 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('trips', function (Blueprint $table) {
-            // Solo agregar la columna si no existe
+        if (Schema::hasTable('trips')) {
+
             if (!Schema::hasColumn('trips', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable()->after('id');
+                Schema::table('trips', function (Blueprint $table) {
+                    $table->unsignedBigInteger('user_id')->nullable()->after('id');
+                });
             }
 
-            // Agregar la llave foránea
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+            // Agregar FK solo si no existe
+            $connection = Schema::getConnection()->getDoctrineSchemaManager();
+            $foreignKeys = $connection->listTableForeignKeys('trips');
+
+            $fkExists = collect($foreignKeys)->contains(fn ($fk) =>
+                in_array('user_id', $fk->getLocalColumns())
+            );
+
+            if (!$fkExists) {
+                Schema::table('trips', function (Blueprint $table) {
+                    $table->foreign('user_id')
+                        ->references('id')
+                        ->on('users')
+                        ->onDelete('cascade');
+                });
+            }
+        }
     }
 
     public function down(): void
     {
-        Schema::table('trips', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
-        });
+        if (Schema::hasTable('trips') && Schema::hasColumn('trips', 'user_id')) {
+            Schema::table('trips', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
+            });
+        }
     }
 };
