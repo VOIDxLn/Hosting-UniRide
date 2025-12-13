@@ -16,7 +16,10 @@ class TripController extends Controller
     // 📋 Mostrar todos los viajes disponibles
     public function index()
     {
-        $trips = Trip::orderBy('departure_time')->get();
+         $trips = Trip::with('driver') // 👈 CLAVE
+        ->orderBy('departure_time')
+        ->get();
+
         return view('trips.index', compact('trips'));
     }
 
