@@ -7,15 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('trips', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('departure_time');
-            $table->string('origin');
-            $table->string('destination');
-            $table->decimal('price', 10, 2);
-            $table->integer('available_seats');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('trips')) {
+            Schema::create('trips', function (Blueprint $table) {
+                $table->id();
+                $table->dateTime('departure_time');
+                $table->string('origin');
+                $table->string('destination');
+                $table->decimal('price', 10, 2);
+                $table->integer('available_seats');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
@@ -23,3 +25,4 @@ return new class extends Migration {
         Schema::dropIfExists('trips');
     }
 };
+
