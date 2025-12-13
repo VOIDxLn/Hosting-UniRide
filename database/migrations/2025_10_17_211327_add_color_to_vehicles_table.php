@@ -6,23 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 class AddColorToVehiclesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
-{
-    Schema::table('vehicles', function (Blueprint $table) {
-        $table->string('color')->nullable()->after('model'); // Agrega la columna color
-    });
-}
+    {
+        if (
+            Schema::hasTable('vehicles') &&
+            !Schema::hasColumn('vehicles', 'color')
+        ) {
+            Schema::table('vehicles', function (Blueprint $table) {
+                $table->string('color')->nullable()->after('model');
+            });
+        }
+    }
 
-public function down()
-{
-    Schema::table('vehicles', function (Blueprint $table) {
-        $table->dropColumn('color');
-    });
-}
-
+    public function down()
+    {
+        if (
+            Schema::hasTable('vehicles') &&
+            Schema::hasColumn('vehicles', 'color')
+        ) {
+            Schema::table('vehicles', function (Blueprint $table) {
+                $table->dropColumn('color');
+            });
+        }
+    }
 }
