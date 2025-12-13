@@ -180,6 +180,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/perfil/actualizar', [App\Http\Controllers\ProfileController::class, 'update'])
     ->name('perfil.update');
 
+    // Perfil Publico para ver usuarios:
+    Route::get('/perfil-publico/{id}', [UserController::class, 'perfilPublico'])
+    ->name('perfil.publico');
 
     // Reseña en perfil conductor
     Route::middleware('auth')->group(function () {
