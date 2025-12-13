@@ -11,11 +11,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seeders SIEMPRE seguros (local + producción)
         $this->call([
             RoleSeeder::class,
             AdminUserSeeder::class,
-            ProductSeeder::class,
-            DemoUsersSeeder::class,
         ]);
+
+        // Seeders SOLO para desarrollo local
+        if (app()->environment('local')) {
+            $this->call([
+                ProductSeeder::class,
+                DemoUsersSeeder::class,
+            ]);
+        }
     }
 }
