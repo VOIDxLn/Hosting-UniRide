@@ -18,7 +18,7 @@ class PaymentController extends Controller
     {
         $trip = Trip::findOrFail($trip_id);
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
 
         // Enviar metadata para saber quién pagó y qué viaje es
         $session = Session::create([
@@ -54,7 +54,7 @@ class PaymentController extends Controller
             return redirect()->route('home')->with('error', 'Error validando el pago.');
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
         $session = Session::retrieve($sessionId);
 
         // Recuperar metadata enviada
