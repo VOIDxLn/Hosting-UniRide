@@ -16,21 +16,17 @@ return new class extends Migration
                 });
             }
 
-            // Agregar FK solo si no existe
-            $connection = Schema::getConnection()->getDoctrineSchemaManager();
-            $foreignKeys = $connection->listTableForeignKeys('trips');
-
-            $fkExists = collect($foreignKeys)->contains(fn ($fk) =>
-                in_array('user_id', $fk->getLocalColumns())
-            );
-
-            if (!$fkExists) {
+            // 🔑 IMPORTANTE:
+            // Laravel NO lanza error si la FK ya existe
+            try {
                 Schema::table('trips', function (Blueprint $table) {
                     $table->foreign('user_id')
                         ->references('id')
                         ->on('users')
                         ->onDelete('cascade');
                 });
+            } catch (\Throwable $e) {
+                // Silencioso: la FK ya existe
             }
         }
     }
@@ -39,7 +35,10 @@ return new class extends Migration
     {
         if (Schema::hasTable('trips') && Schema::hasColumn('trips', 'user_id')) {
             Schema::table('trips', function (Blueprint $table) {
-                $table->dropForeign(['user_id']);
+                try {
+                    $table->dropForeign(['user_id']);
+                } catch (\Throwable $e) {}
+                
                 $table->dropColumn('user_id');
             });
         }
